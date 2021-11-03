@@ -1,0 +1,115 @@
+package sqlite;
+import java.sql.Connection;
+import java.sql.ResultSet; 
+import java.sql.Statement; 
+import java.sql.DatabaseMetaData;  
+import java.sql.DriverManager;  
+import java.sql.PreparedStatement; 
+import java.sql.SQLException;  
+
+public class Firstcall 
+{
+	
+	 private Connection connect() {  
+		 String url = "jdbc:sqlite:C:\\sqlite\\McX255.db";
+	        Connection conn = null;  
+	        try {  
+	            conn = DriverManager.getConnection(url);  
+	        } catch (SQLException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	        return conn;  
+	    }  
+	    
+	  public static void createNewDatabase(String fileName) {  
+		   
+	        String url = "jdbc:sqlite:C:\\sqlite\\" + fileName;  
+	   
+	        try {  
+	            Connection conn = DriverManager.getConnection(url);  
+	            if (conn != null) {  
+	                DatabaseMetaData meta = conn.getMetaData();  
+	                System.out.println("The driver name is " + meta.getDriverName());  
+	                System.out.println("A new movie database has been created.");  
+	            }  
+	   
+	        } catch (SQLException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    }  
+	  
+	  public static void createNewTable() 
+  
+	  {
+	        String url = "jdbc:sqlite:C:\\sqlite\\McX255.db";  
+
+	        String sql = "CREATE TABLE IF NOT EXISTS movies (\n"  
+	                + " id integer PRIMARY KEY,\n"  
+	                + " Movie text NOT NULL,\n"  
+	                + " Actor text NOT NULL,\n"
+	                + " Actress text NOT NULL,\n"
+	                + ");";  
+	          
+	        try{  
+	            Connection conn = DriverManager.getConnection(url);  
+	            Statement stmt = conn.createStatement();  
+	            stmt.execute(sql);  
+	        } catch (SQLException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    }  
+	  
+	 
+
+	 
+	    public void insert(String Movie,String Actor,String Actress ) {  
+	        String sql = "INSERT INTO movies( Movie, Actor, Actres) VALUES(?,?)";  
+	        String url = "jdbc:sqlite:C:\\sqlite\\McX255.db";
+	        
+	        try{  
+	        	 Connection conn = DriverManager.getConnection(url);
+	            //Connection conn = this.connect();  
+	            PreparedStatement pstmt = conn.prepareStatement(sql);  
+	            pstmt.setString(1, Movie);  
+	            pstmt.setString(2, Actor);
+	            pstmt.setString(3, Actress);
+	            pstmt.executeUpdate();  
+	        } catch (SQLException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    }  
+	    
+	    public void selectAll(){  
+ 	        String sql = "SELECT * FROM movies";  
+            String url = "jdbc:sqlite:C:\\sqlite\\McX255.db";
+	        
+	        try{  
+	        	Connection conn = DriverManager.getConnection(url);
+	            Statement stmt  = conn.createStatement();  
+	            ResultSet rs    = stmt.executeQuery(sql);  
+	               
+	            while (rs.next()) {  
+	                System.out.println(rs.getInt("id") +  "\t" +   
+	                                   rs.getString("Movie") + "\t" +  
+	                                   rs.getString("Actor") + "\t" +  
+	                                   rs.getString("Actress"));  
+	            }  
+	        } catch (SQLException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    }
+	    public static void main(String[] args) 
+	    {  
+	    	Firstcall app = new Firstcall();
+	        createNewDatabase("McX255.db");
+	        createNewTable();  
+	        
+	        
+	        app.insert("Avengers", "RDJ","SCARLET JOHHANSON");  
+	        app.insert("THE PROPOSAL", "RYAN REYNOLDS","SANDRA BULLOCK");  
+	        
+	        
+	        app.selectAll();
+	    }  
+
+}
